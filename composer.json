@@ -1,0 +1,55 @@
+{
+    "name": "laravel-whisper/whisper",
+    "description": "Work with external APIs using the Eloquent ORM models.",
+    "keywords": [
+        "laravel",
+        "whisper",
+        "eloquent",
+        "api"
+    ],
+    "homepage": "https://github.com/laravel-whisper/whisper",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Miguel Piedrafita",
+            "email": "soy@miguelpiedrafita.com",
+            "homepage": "https://miguelpiedrafita.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Sergio Ródenas",
+            "email": "serrogo@tedium.es",
+            "homepage": "http://www.rodenastyle.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "LaravelWhisper\\Whisper\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "LaravelWhisper\\Whisper\\Test\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "LaravelWhisper\\Whisper\\WhisperServiceProvider"
+            ]
+        }
+    }
+}
