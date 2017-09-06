@@ -2,20 +2,20 @@
 
 namespace LaravelWhisper\Whisper\Test;
 
-use PHPUnit\Framework\TestCase as BaseTestCase;
 use Mockery as m;
 use Carbon\Carbon;
 use LaravelWhisper\Whisper\Model;
+use PHPUnit\Framework\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
-  public function setup()
-  {
-      parent::setup();
-      Carbon::setTestNow(Carbon::now());
-  }
+    public function setup()
+    {
+        parent::setup();
+        Carbon::setTestNow(Carbon::now());
+    }
 
-  public function tearDown()
+    public function tearDown()
     {
         parent::tearDown();
         m::close();
