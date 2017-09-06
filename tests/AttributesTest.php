@@ -99,15 +99,15 @@ class AttributesTest extends TestCase
     public function testCalculatedAttributes()
     {
         $model = new class extends ModelStub {
-          public function getPasswordAttribute()
-          {
-            return '******';
-          }
+            public function getPasswordAttribute()
+            {
+                return '******';
+            }
 
-          public function setPasswordAttribute($value)
-          {
-            $this->attributes['password_hash'] = sha1($value);
-          }
+            public function setPasswordAttribute($value)
+            {
+                $this->attributes['password_hash'] = sha1($value);
+            }
         };
         $model->password = 'secret';
         $attributes = $model->getAttributes();
