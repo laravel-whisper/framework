@@ -3,7 +3,7 @@
 namespace LaravelWhisper\Whisper\Test;
 
 use Mockery as m;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use LaravelWhisper\Whisper\Model;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 

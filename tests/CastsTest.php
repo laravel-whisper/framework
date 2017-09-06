@@ -5,89 +5,34 @@ namespace LaravelWhisper\Whisper\Test;
 use stdClass;
 use LaravelWhisper\Whisper\Test\Stubs\ModelStub;
 
-class ModelTest extends TestCase
+class CastsTest extends TestCase
 {
-    public function testMagicMethods()
+    public function testDirtyOnCastOrDateAttributes()
     {
-        $model = new ModelStub;
-        $model->name = 'foo';
-        $this->assertEquals('foo', $model->name);
-        $this->assertTrue(isset($model->name));
-        unset($model->name);
-        $this->assertFalse(isset($model->name));
-    }
-
-    public function testArrayAccess()
-    {
-        $model = new ModelStub;
-        $model['name'] = 'foo';
-        $this->assertEquals('foo', $model['name']);
-        $this->assertTrue(isset($model['name']));
-        unset($model['name']);
-        $this->assertFalse(isset($model['name']));
-    }
-
-    public function testConstructor()
-    {
-        $model = new ModelStub(['foo' => 'bar']);
-
-        $this->assertEquals('bar', $model->getAttribute('foo'));
-    }
-
-    public function testToString()
-    {
-        $model = new ModelStub(['name' => 'foo']);
-
-        $this->assertEquals(json_encode(['name' => 'foo']), (string) $model);
-    }
-
-    public function testGetter()
-    {
-        $model = new class extends ModelStub {
-            public function getGetterAttribute()
-            {
-                return 'getter';
-            }
-        };
-
-        $this->assertEquals('getter', $model->getter);
-    }
-
-    public function testSetter()
-    {
-        $model = new class extends ModelStub {
-            public function setSetterAttribute($value)
-            {
-                $this->setter = 'setter';
-            }
-        };
-        $model->setter = 'getter';
-
-        $this->assertEquals('setter', $model->setter);
+        $model = $this->getCastsStub();
+        $model->setDateFormat('Y-m-d H:i:s');
+        $model->boolAttribute = 1;
+        $model->foo = 1;
+        $model->bar = '2017-03-18';
+        $model->dateAttribute = '2017-03-18';
+        $model->datetimeAttribute = '2017-03-23 22:17:00';
+        $model->syncOriginal();
+        $model->boolAttribute = true;
+        $model->foo = true;
+        $model->bar = '2017-03-18 00:00:00';
+        $model->dateAttribute = '2017-03-18 00:00:00';
+        $model->datetimeAttribute = null;
+        $this->assertTrue($model->isDirty());
+        $this->assertTrue($model->isDirty('foo'));
+        $this->assertTrue($model->isDirty('bar'));
+        $this->assertFalse($model->isDirty('boolAttribute'));
+        $this->assertFalse($model->isDirty('dateAttribute'));
+        $this->assertTrue($model->isDirty('datetimeAttribute'));
     }
 
     public function testCasts()
     {
-        $model = new class extends ModelStub {
-            protected $casts = [
-          'intAttribute' => 'int',
-          'floatAttribute' => 'float',
-          'stringAttribute' => 'string',
-          'boolAttribute' => 'bool',
-          'booleanAttribute' => 'boolean',
-          'objectAttribute' => 'object',
-          'arrayAttribute' => 'array',
-          'jsonAttribute' => 'json',
-          'dateAttribute' => 'date',
-          'datetimeAttribute' => 'datetime',
-          'timestampAttribute' => 'timestamp',
-        ];
-
-            public function jsonAttributeValue()
-            {
-                return $this->attributes['jsonAttribute'];
-            }
-        };
+        $model = $this->getCastsStub();
 
         $model->setDateFormat('Y-m-d H:i:s');
         $model->intAttribute = '3';
@@ -139,5 +84,29 @@ class ModelTest extends TestCase
         $this->assertEquals('1969-07-20 00:00:00', $arr['dateAttribute']);
         $this->assertEquals('1969-07-20 22:56:00', $arr['datetimeAttribute']);
         $this->assertEquals(-14173440, $arr['timestampAttribute']);
+    }
+
+    protected function getCastsStub()
+    {
+      return new class extends ModelStub {
+        protected $casts = [
+          'intAttribute' => 'int',
+          'floatAttribute' => 'float',
+          'stringAttribute' => 'string',
+          'boolAttribute' => 'bool',
+          'booleanAttribute' => 'boolean',
+          'objectAttribute' => 'object',
+          'arrayAttribute' => 'array',
+          'jsonAttribute' => 'json',
+          'dateAttribute' => 'date',
+          'datetimeAttribute' => 'datetime',
+          'timestampAttribute' => 'timestamp',
+        ];
+
+        public function jsonAttributeValue()
+        {
+          return $this->attributes['jsonAttribute'];
+        }
+      };
     }
 }
