@@ -11,7 +11,7 @@ class WhisperServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-      //
+        //
     }
 
     /**
@@ -19,6 +19,6 @@ class WhisperServiceProvider extends ServiceProvider
      */
     public function register()
     {
-      //
+        //
     }
 }
