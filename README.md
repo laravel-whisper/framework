@@ -1,7 +1,7 @@
 # Work with external APIs using the Eloquent ORM models.
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/laravel-whisper/whisper.svg?style=flat-square)](https://packagist.org/packages/laravel-whisper/whisper)
-[![Build Status](https://img.shields.io/travis/laravel-whisper/whisper/master.svg?style=flat-square)](https://travis-ci.org/laravel-whisper/whisper)
+[![Build Status](https://img.shields.io/travis/Laravel-Whisper/Whisper/master.svg?style=flat-square)](https://travis-ci.org/Laravel-Whisper/Whisper)
 [![StyleCI Badge](https://styleci.io/repos/102520788/shield?style=flat-square)](https://styleci.io/repos/102520788)
 [![Total Downloads](https://img.shields.io/packagist/dt/laravel-whisper/whisper.svg?style=flat-square)](https://packagist.org/packages/laravel-whisper/whisper)
 
