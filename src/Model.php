@@ -6,25 +6,25 @@ use ArrayAccess;
 use JsonSerializable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Concerns\HasEvents;
 use Illuminate\Database\Eloquent\JsonEncodingException;
 use Illuminate\Database\Eloquent\Concerns\HasAttributes;
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
-use Illuminate\Database\Eloquent\Concerns\HasRelationships;
 use Illuminate\Database\Eloquent\Concerns\HidesAttributes;
-use Illuminate\Database\Eloquent\Concerns\HasEvents;
+use Illuminate\Database\Eloquent\Concerns\HasRelationships;
 
 class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 {
-  use HasAttributes, HasTimestamps, HasRelationships, HidesAttributes, HasEvents;
+    use HasAttributes, HasTimestamps, HasRelationships, HidesAttributes, HasEvents;
 
-  /**
+    /**
      * The event dispatcher instance.
      *
      * @var \Illuminate\Contracts\Events\Dispatcher
      */
     protected static $dispatcher;
 
-  /**
+    /**
      * The name of the "created at" column.
      *
      * @var string
@@ -71,6 +71,7 @@ class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
         if (JSON_ERROR_NONE !== json_last_error()) {
             throw JsonEncodingException::forModel($this, json_last_error_msg());
         }
+
         return $json;
     }
 
@@ -94,86 +95,93 @@ class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
         return $this->toJson();
     }
 
-  /**
- * Dynamically retrieve attributes on the model.
- *
- * @param  string  $key
- * @return mixed
- */
-public function __get($key)
-{
-    return $this->getAttribute($key);
-}
-/**
- * Dynamically set attributes on the model.
- *
- * @param  string  $key
- * @param  mixed  $value
- * @return void
- */
-public function __set($key, $value)
-{
-    $this->setAttribute($key, $value);
-}
-/**
- * Determine if the given attribute exists.
- *
- * @param  mixed  $offset
- * @return bool
- */
-public function offsetExists($offset)
-{
-    return ! is_null($this->getAttribute($offset));
-}
-/**
- * Get the value for a given offset.
- *
- * @param  mixed  $offset
- * @return mixed
- */
-public function offsetGet($offset)
-{
-    return $this->getAttribute($offset);
-}
-/**
- * Set the value for a given offset.
- *
- * @param  mixed  $offset
- * @param  mixed  $value
- * @return void
- */
-public function offsetSet($offset, $value)
-{
-    $this->setAttribute($offset, $value);
-}
-/**
- * Unset the value for a given offset.
- *
- * @param  mixed  $offset
- * @return void
- */
-public function offsetUnset($offset)
-{
-    unset($this->attributes[$offset], $this->relations[$offset]);
-}
-/**
- * Determine if an attribute or relation exists on the model.
- *
- * @param  string  $key
- * @return bool
- */
-public function __isset($key)
-{
-    return $this->offsetExists($key);
-}
-/**
- * Unset an attribute on the model.
- *
- * @param  string  $key
- * @return void
- */
-public function __unset($key)
-{
-    $this->offsetUnset($key);
-}
+    /**
+     * Dynamically retrieve attributes on the model.
+     *
+     * @param  string  $key
+     * @return mixed
+     */
+    public function __get($key)
+    {
+        return $this->getAttribute($key);
+    }
+
+    /**
+     * Dynamically set attributes on the model.
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     * @return void
+     */
+    public function __set($key, $value)
+    {
+        $this->setAttribute($key, $value);
+    }
+
+    /**
+     * Determine if the given attribute exists.
+     *
+     * @param  mixed  $offset
+     * @return bool
+     */
+    public function offsetExists($offset)
+    {
+        return ! is_null($this->getAttribute($offset));
+    }
+
+    /**
+     * Get the value for a given offset.
+     *
+     * @param  mixed  $offset
+     * @return mixed
+     */
+    public function offsetGet($offset)
+    {
+        return $this->getAttribute($offset);
+    }
+
+    /**
+     * Set the value for a given offset.
+     *
+     * @param  mixed  $offset
+     * @param  mixed  $value
+     * @return void
+     */
+    public function offsetSet($offset, $value)
+    {
+        $this->setAttribute($offset, $value);
+    }
+
+    /**
+     * Unset the value for a given offset.
+     *
+     * @param  mixed  $offset
+     * @return void
+     */
+    public function offsetUnset($offset)
+    {
+        unset($this->attributes[$offset], $this->relations[$offset]);
+    }
+
+    /**
+     * Determine if an attribute or relation exists on the model.
+     *
+     * @param  string  $key
+     * @return bool
+     */
+    public function __isset($key)
+    {
+        return $this->offsetExists($key);
+    }
+
+    /**
+     * Unset an attribute on the model.
+     *
+     * @param  string  $key
+     * @return void
+     */
+    public function __unset($key)
+    {
+        $this->offsetUnset($key);
+    }
 }
