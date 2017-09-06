@@ -6,7 +6,7 @@ use LaravelWhisper\Whisper\Model;
 
 class ModelStub extends Model
 {
-  protected $guarded = [
+    protected $guarded = [
     //
   ];
 }

@@ -29,9 +29,9 @@ class ModelTest extends TestCase
 
     public function testConstructor()
     {
-      $model = new ModelStub(['foo' => 'bar']);
+        $model = new ModelStub(['foo' => 'bar']);
 
-      $this->assertEquals('bar', $model->getAttribute('foo'));
+        $this->assertEquals('bar', $model->getAttribute('foo'));
     }
 
     public function testToString()
