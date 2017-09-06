@@ -34,4 +34,29 @@ class ModelTest extends TestCase
 
         $this->assertEquals(json_encode(['name' => 'foo']), (string) $model);
     }
+
+    public function testGetter()
+    {
+      $model = new class extends ModelStub{
+        public function getGetterAttribute()
+        {
+          return 'getter';
+        }
+      };
+
+      $this->assertEquals('getter', $model->getter);
+    }
+
+    public function testSetter()
+    {
+      $model = new class extends ModelStub{
+        public function setSetterAttribute($value)
+        {
+          $this->setter = 'setter';
+        }
+      };
+      $model->setter = 'getter';
+
+      $this->assertEquals('setter', $model->setter);
+    }
 }
