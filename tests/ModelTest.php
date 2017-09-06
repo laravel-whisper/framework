@@ -63,8 +63,8 @@ class ModelTest extends TestCase
 
     public function testCasts()
     {
-      $model = new class extends ModelStub {
-        protected $casts = [
+        $model = new class extends ModelStub {
+            protected $casts = [
           'intAttribute' => 'int',
           'floatAttribute' => 'float',
           'stringAttribute' => 'string',
@@ -78,13 +78,13 @@ class ModelTest extends TestCase
           'timestampAttribute' => 'timestamp',
         ];
 
-        public function jsonAttributeValue()
-        {
-          return $this->attributes['jsonAttribute'];
-        }
-      };
+            public function jsonAttributeValue()
+            {
+                return $this->attributes['jsonAttribute'];
+            }
+        };
 
-      $model->setDateFormat('Y-m-d H:i:s');
+        $model->setDateFormat('Y-m-d H:i:s');
         $model->intAttribute = '3';
         $model->floatAttribute = '4.0';
         $model->stringAttribute = 2.5;
