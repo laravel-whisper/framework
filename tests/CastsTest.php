@@ -88,8 +88,8 @@ class CastsTest extends TestCase
 
     protected function getCastsStub()
     {
-      return new class extends ModelStub {
-        protected $casts = [
+        return new class extends ModelStub {
+            protected $casts = [
           'intAttribute' => 'int',
           'floatAttribute' => 'float',
           'stringAttribute' => 'string',
@@ -103,10 +103,10 @@ class CastsTest extends TestCase
           'timestampAttribute' => 'timestamp',
         ];
 
-        public function jsonAttributeValue()
-        {
-          return $this->attributes['jsonAttribute'];
-        }
-      };
+            public function jsonAttributeValue()
+            {
+                return $this->attributes['jsonAttribute'];
+            }
+        };
     }
 }
