@@ -37,26 +37,26 @@ class ModelTest extends TestCase
 
     public function testGetter()
     {
-      $model = new class extends ModelStub{
-        public function getGetterAttribute()
-        {
-          return 'getter';
-        }
-      };
+        $model = new class extends ModelStub {
+            public function getGetterAttribute()
+            {
+                return 'getter';
+            }
+        };
 
-      $this->assertEquals('getter', $model->getter);
+        $this->assertEquals('getter', $model->getter);
     }
 
     public function testSetter()
     {
-      $model = new class extends ModelStub{
-        public function setSetterAttribute($value)
-        {
-          $this->setter = 'setter';
-        }
-      };
-      $model->setter = 'getter';
+        $model = new class extends ModelStub {
+            public function setSetterAttribute($value)
+            {
+                $this->setter = 'setter';
+            }
+        };
+        $model->setter = 'getter';
 
-      $this->assertEquals('setter', $model->setter);
+        $this->assertEquals('setter', $model->setter);
     }
 }
