@@ -27,11 +27,16 @@ class ModelTest extends TestCase
         $this->assertFalse(isset($model['name']));
     }
 
+    public function testConstructor()
+    {
+      $model = new ModelStub(['foo' => 'bar']);
+
+      $this->assertEquals('bar', $model->getAttribute('foo'));
+    }
+
     public function testToString()
     {
-        $model = new ModelStub();
-
-        $model->name = 'foo';
+        $model = new ModelStub(['name' => 'foo']);
 
         $this->assertEquals(json_encode(['name' => 'foo']), (string) $model);
     }

@@ -4,18 +4,21 @@ namespace LaravelWhisper\Whisper;
 
 use ArrayAccess;
 use JsonSerializable;
+use Illuminate\Support\Str;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\MassAssignmentException;
 use Illuminate\Database\Eloquent\Concerns\HasEvents;
 use Illuminate\Database\Eloquent\JsonEncodingException;
 use Illuminate\Database\Eloquent\Concerns\HasAttributes;
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Concerns\HidesAttributes;
 use Illuminate\Database\Eloquent\Concerns\HasRelationships;
+use Illuminate\Database\Eloquent\Concerns\GuardsAttributes;
 
 class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 {
-    use HasAttributes, HasTimestamps, HasRelationships, HidesAttributes, HasEvents;
+    use HasAttributes, HasTimestamps, HasRelationships, HidesAttributes, HasEvents, GuardsAttributes;
 
     /**
      * The event dispatcher instance.
@@ -36,6 +39,115 @@ class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
      * @var string
      */
     const UPDATED_AT = 'updated_at';
+
+    /**
+     * The array of booted models.
+     *
+     * @var array
+     */
+    protected static $booted = [];
+
+    /**
+     * Create a new Eloquent model instance.
+     *
+     * @param  array  $attributes
+     * @return void
+     */
+    public function __construct(array $attributes = [])
+    {
+        $this->bootIfNotBooted();
+        $this->syncOriginal();
+        $this->fill($attributes);
+    }
+
+    /**
+     * Check if the model needs to be booted and if so, do it.
+     *
+     * @return void
+     */
+    protected function bootIfNotBooted()
+    {
+        if (! isset(static::$booted[static::class])) {
+            static::$booted[static::class] = true;
+            $this->fireModelEvent('booting', false);
+            static::boot();
+            $this->fireModelEvent('booted', false);
+        }
+    }
+
+    /**
+     * The "booting" method of the model.
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+        static::bootTraits();
+    }
+
+    /**
+     * Boot all of the bootable traits on the model.
+     *
+     * @return void
+     */
+    protected static function bootTraits()
+    {
+        $class = static::class;
+        foreach (class_uses_recursive($class) as $trait) {
+            if (method_exists($class, $method = 'boot'.class_basename($trait))) {
+                forward_static_call([$class, $method]);
+            }
+        }
+    }
+
+    /**
+     * Fill the model with an array of attributes.
+     *
+     * @param  array  $attributes
+     * @return $this
+     *
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
+     */
+    public function fill(array $attributes)
+    {
+        $totallyGuarded = $this->totallyGuarded();
+        foreach ($this->fillableFromArray($attributes) as $key => $value) {
+            $key = $this->removeTableFromKey($key);
+            // The developers may choose to place some attributes in the "fillable" array
+            // which means only those attributes may be set through mass assignment to
+            // the model, and all others will just get ignored for security reasons.
+            if ($this->isFillable($key)) {
+                $this->setAttribute($key, $value);
+            } elseif ($totallyGuarded) {
+                throw new MassAssignmentException($key);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * Fill the model with an array of attributes. Force mass assignment.
+     *
+     * @param  array  $attributes
+     * @return $this
+     */
+    public function forceFill(array $attributes)
+    {
+        return static::unguarded(function () use ($attributes) {
+            return $this->fill($attributes);
+        });
+    }
+
+    /**
+     * Remove the table name from a given key.
+     *
+     * @param  string  $key
+     * @return string
+     */
+    protected function removeTableFromKey($key)
+    {
+        return Str::contains($key, '.') ? last(explode('.', $key)) : $key;
+    }
 
     /**
      * Get the value indicating whether the IDs are incrementing.
