@@ -8,17 +8,15 @@ use Illuminate\Support\Str;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Concerns\HasEvents;
-use Illuminate\Database\Eloquent\JsonEncodingException;
 use Illuminate\Database\Eloquent\Concerns\HasAttributes;
-use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\MassAssignmentException;
-use Illuminate\Database\Eloquent\Concerns\HidesAttributes;
 use Illuminate\Database\Eloquent\Concerns\GuardsAttributes;
+use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Concerns\HasRelationships;
 
-class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
+class Whisperer implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 {
-    use HasAttributes, HasTimestamps, HasRelationships, HidesAttributes, HasEvents, GuardsAttributes;
+    use HasEvents, HasAttributes, GuardsAttributes, HasTimestamps, HasRelationships;
 
     /**
      * The event dispatcher instance.
@@ -28,11 +26,19 @@ class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     protected static $dispatcher;
 
     /**
+     * The array of booted models.
+     *
+     * @var array
+     */
+    protected static $booted = [];
+
+    /**
      * The name of the "created at" column.
      *
      * @var string
      */
     const CREATED_AT = 'created_at';
+
     /**
      * The name of the "updated at" column.
      *
@@ -41,14 +47,21 @@ class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     const UPDATED_AT = 'updated_at';
 
     /**
-     * The array of booted models.
+     * Indicates if the model exists.
      *
-     * @var array
+     * @var bool
      */
-    protected static $booted = [];
+    public $exists = false;
 
     /**
-     * Create a new Eloquent model instance.
+     * The primary key for the model.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'id';
+
+    /**
+     * Create a new Whisperer instance.
      *
      * @param  array  $attributes
      * @return void
@@ -137,6 +150,62 @@ class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
         return static::unguarded(function () use ($attributes) {
             return $this->fill($attributes);
         });
+    }
+
+    /**
+     * Get the primary key for the model.
+     *
+     * @return string
+     */
+    public function getKeyName()
+    {
+        return $this->primaryKey;
+    }
+
+    public static function make(array $attributes)
+    {
+        return new static($attributes);
+    }
+
+    /**
+     * Delete the model from the database.
+     *
+     * @return bool|null
+     *
+     * @throws \Exception
+     */
+    public function delete()
+    {
+        if (is_null($this->getKeyName())) {
+            throw new Exception('No primary key defined on model.');
+        }
+
+        // If the model doesn't exist, there is nothing to delete so we'll just return
+        // immediately and not do anything else. Otherwise, we will continue with a
+        // deletion process on the model, firing the proper events, and so forth.
+        if (!$this->exists) {
+            return;
+        }
+
+        if ($this->fireModelEvent('deleting') === false) {
+            return false;
+        }
+
+        // Here, we'll touch the owning models, verifying these timestamps get updated
+        // for the models. This will allow any caching to get broken on the parents
+        // by the timestamp. Then we will go ahead and delete the model instance.
+        $this->touchOwners();
+
+        $this->performDeleteOnModel(); // TODO: Perform client operation here
+
+        $this->exists = false;
+
+        // Once the model has been deleted, we will fire off the deleted event so that
+        // the developers may hook into post-delete operations. We will then return
+        // a boolean true as the delete is presumably successful on the database.
+        $this->fireModelEvent('deleted', false);
+
+        return true;
     }
 
     /**
@@ -296,5 +365,19 @@ class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     public function __unset($key)
     {
         $this->offsetUnset($key);
+    }
+
+    /**
+     * Handle dynamic calls to the container to set attributes.
+     *
+     * @param  string  $method
+     * @param  array   $parameters
+     * @return $this
+     */
+    public function __call(string $method, array $parameters)
+    {
+        $this->setAttribute($method, count($parameters) > 1 ? $parameters : $parameters[0] ?? true);
+
+        return $this;
     }
 }
