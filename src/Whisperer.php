@@ -9,12 +9,12 @@ use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Concerns\HasEvents;
 use Illuminate\Database\Eloquent\Concerns\HasAttributes;
-use Illuminate\Database\Eloquent\MassAssignmentException;
-use Illuminate\Database\Eloquent\Concerns\GuardsAttributes;
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
-use Illuminate\Database\Eloquent\Concerns\HasRelationships;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\MassAssignmentException;
 use Illuminate\Database\Eloquent\Concerns\HidesAttributes;
+use Illuminate\Database\Eloquent\Concerns\GuardsAttributes;
+use Illuminate\Database\Eloquent\Concerns\HasRelationships;
 
 class Whisperer implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 {
@@ -184,7 +184,6 @@ class Whisperer implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
         return $this;
     }
 
-
     /**
      * Get the value indicating whether the IDs are incrementing.
      *
@@ -239,7 +238,7 @@ class Whisperer implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
         // If the model doesn't exist, there is nothing to delete so we'll just return
         // immediately and not do anything else. Otherwise, we will continue with a
         // deletion process on the model, firing the proper events, and so forth.
-        if (!$this->exists) {
+        if (! $this->exists) {
             return;
         }
 
@@ -273,7 +272,7 @@ class Whisperer implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
      */
     public function update(array $attributes = [], array $options = [])
     {
-        if (!$this->exists) {
+        if (! $this->exists) {
             return false;
         }
 
@@ -551,7 +550,6 @@ class Whisperer implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
         });
     }
 
-
     /**
      * Determine if two models have the same identifier.
      *
@@ -575,7 +573,6 @@ class Whisperer implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     {
         return ! $this->is($model);
     }
-
 
     /**
      * Get the current client for the model.
@@ -622,7 +619,6 @@ class Whisperer implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
         return Str::contains($key, '.') ? last(explode('.', $key)) : $key;
     }
 
-
     /**
      * Get the queueable identity for the entity.
      *
@@ -663,7 +659,6 @@ class Whisperer implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
         return array_unique($relations);
     }
 
-
     /**
      * Get the value of the model's route key.
      *
@@ -684,7 +679,6 @@ class Whisperer implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
         return $this->getKeyName();
     }
 
-
     /**
      * Retrieve the model for a bound value.
      *
@@ -695,7 +689,6 @@ class Whisperer implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     {
         return $this->find($value);
     }
-
 
     /**
      * Convert the model instance to an array.
