@@ -362,7 +362,7 @@ class Whisperer implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
         $dirty = $this->getDirty();
 
         if (count($dirty) > 0) {
-            static::$client::update($this->getKey(), $dirty);
+            static::$client::update($this->getKey(), $dirty, $this->attributes);
 
             $this->fireModelEvent('updated', false);
 
