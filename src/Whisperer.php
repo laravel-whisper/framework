@@ -485,7 +485,9 @@ class Whisperer implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     public static function find($identifier)
     {
         try {
-            return self::make(call_user_func_array([static::$client, 'find'], func_get_args()))->syncOriginal();
+            return tap(self::make(call_user_func_array([static::$client, 'find'], func_get_args()))->syncOriginal(), function ($model) {
+                $model->exists = true;
+            });
         } catch (\Throwable $e) {
             return;
         }
