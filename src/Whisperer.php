@@ -225,11 +225,13 @@ class Whisperer implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     /**
      * Delete the model from the database.
      *
+     * @param array|null $options
+     *
      * @return bool|null
      *
      * @throws \Exception
      */
-    public function delete()
+    public function delete($options = [])
     {
         if (is_null($key = $this->getKeyName())) {
             throw new Exception('No primary key defined on model.');
@@ -251,7 +253,7 @@ class Whisperer implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
         // by the timestamp. Then we will go ahead and delete the model instance.
         $this->touchOwners();
 
-        static::$client::delete($this->$key);
+        static::$client::delete($this->$key, $options, $this->attributes);
 
         $this->exists = false;
 
