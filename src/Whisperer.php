@@ -523,8 +523,8 @@ class Whisperer implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
      */
     public static function create(array $attributes = [])
     {
-        return tap(self::make($attributes), function ($instance) {
-            $instance->save();
+        return tap(self::make(static::$client::create($attributes)), function ($model) {
+            $model->exists = true;
         });
     }
 
