@@ -508,9 +508,9 @@ class Whisperer implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
         return $model;
     }
 
-    public function all()
+    public static function all()
     {
-        return $this->newCollection(collect(static::$client::all())->map(function ($result) {
+        return (new self)->newCollection(collect(static::$client::all())->map(function ($result) {
             return (new static)->forceFill($attributes);
         })->toArray());
     }
