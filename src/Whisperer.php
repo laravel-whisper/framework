@@ -524,7 +524,7 @@ class Whisperer implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
      */
     public static function create(array $attributes = [])
     {
-        return tap(self::make(static::$client::create(func_get_args())), function ($model) {
+        return tap(self::make(call_user_func_array([static::$client, 'create'], func_get_args())), function ($model) {
             $model->exists = true;
         });
     }
