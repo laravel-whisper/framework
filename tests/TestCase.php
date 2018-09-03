@@ -4,7 +4,7 @@ namespace LaravelWhisper\Whisper\Test;
 
 use Mockery as m;
 use Illuminate\Support\Carbon;
-use LaravelWhisper\Whisper\Model;
+use LaravelWhisper\Whisper\Whisperer;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
@@ -20,7 +20,7 @@ abstract class TestCase extends BaseTestCase
         parent::tearDown();
         m::close();
         Carbon::setTestNow(null);
-        Model::unsetEventDispatcher();
+	    Whisperer::unsetEventDispatcher();
         Carbon::resetToStringFormat();
     }
 }

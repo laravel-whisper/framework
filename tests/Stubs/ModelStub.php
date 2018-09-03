@@ -2,9 +2,9 @@
 
 namespace LaravelWhisper\Whisper\Test\Stubs;
 
-use LaravelWhisper\Whisper\Model;
+use LaravelWhisper\Whisper\Whisperer;
 
-class ModelStub extends Model
+class ModelStub extends Whisperer
 {
     protected $guarded = [
     //
